@@ -1,0 +1,7 @@
+
+apiServer:
+  port: 8080
+
+nwsClient:
+  url: "https://api.weather.gov"
+

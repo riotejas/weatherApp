@@ -1,0 +1,16 @@
+meta {
+  name: forecast
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{host}}/v1/forecast?latitude=30.42868&longitude=-97.84273
+  body: none
+  auth: none
+}
+
+params:query {
+  latitude: 30.42868
+  longitude: -97.84273
+}

@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: weather_app
+  version: 1.0.0
+paths:
+  /doc:
+    get:
+      summary: doc
+      operationId: doc
+      description: ''
+      tags:
+        - ''
+      responses:
+        '200':
+          description: ''
+  /v1/forecast:
+    get:
+      summary: forecast
+      operationId: forecast
+      description: ''
+      tags:
+        - ''
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: latitude
+          in: query
+          description: ''
+          required: true
+          example: '30.42868'
+        - name: longitude
+          in: query
+          description: ''
+          required: true
+          example: '-97.84273'
+  /health:
+    get:
+      summary: health
+      operationId: health
+      description: ''
+      tags:
+        - ''
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: Accept
+          in: header
+          description: ''
+          required: true
+          example: application/json
+  /error:
+    get:
+      summary: simulate error
+      operationId: simulate error
+      description: ''
+      tags:
+        - ''
+      responses:
+        '200':
+          description: ''
+servers:
+  - url: http://localhost:8080
+components:
+  schemas: {}
+  requestBodies: {}
+  securitySchemes: {}
