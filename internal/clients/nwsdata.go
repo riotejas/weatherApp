@@ -44,8 +44,8 @@ func (nd *nwsData) Forecast(ctx context.Context) ([]byte, error) {
 	gridRequestUrl := fmt.Sprintf("%s/points/%s,%s", nd.url, lat, lng)
 	slog.Info("nws grid request", "url", gridRequestUrl)
 
-	// get forecast URL
-	gridData, err := fetchGridData(gridRequestUrl)
+	// get grid data containing the forecast URL
+	gridData, err := fetchClientData[grid](gridRequestUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -53,10 +53,12 @@ func (nd *nwsData) Forecast(ctx context.Context) ([]byte, error) {
 	forecastRequestUrl := gridData.Properties.Forecast
 	slog.Info("nws forecast request", "url", forecastRequestUrl)
 	// get forecast data
-	forecastData, err := fetchForecastData(forecastRequestUrl)
+	forecastData, err := fetchClientData[forecast](forecastRequestUrl)
 	if err != nil {
 		return nil, err
 	}
+
+	// parse for the data we care about
 	if forecastData.Properties.Periods == nil || len(forecastData.Properties.Periods) == 0 {
 		return nil, errors.New("forecast period is empty")
 	}
@@ -99,53 +101,29 @@ func generateFeels(temp int) string {
 	}
 }
 
-// fetchGridData get the grid data which contains the forecast URL
-func fetchGridData(url string) (grid, error) {
-	var result grid
-	resBody, err := fetchClientData(url)
-	if err != nil {
-		return result, err
-	}
-	err = json.Unmarshal(resBody, &result)
-	if err != nil {
-		return result, err
-	}
-	return result, nil
-}
-
-// fetchForecastData get the forecast data
-func fetchForecastData(url string) (forecast, error) {
-	var result forecast
-	resBody, err := fetchClientData(url)
-	if err != nil {
-		return result, err
-	}
-	err = json.Unmarshal(resBody, &result)
-	if err != nil {
-		return result, err
-	}
-
-	return result, nil
-}
-
-// fetchClientData handle the actual client request
-func fetchClientData(url string) ([]byte, error) {
+// fetchData is a generic function that can fetch and unmarshal data into either grid or forecast structs
+func fetchClientData[T grid | forecast](url string) (T, error) {
+	var result T
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error creating nwsData request: %w", err)
+		return result, fmt.Errorf("error creating nwsData request: %w", err)
 	}
 	req.Header.Set("User-Agent", "WeatherApp/v1")
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error sending nwsData request: %w", err)
+		return result, fmt.Errorf("error sending nwsData request: %w", err)
 	}
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error reading nwsData body: %w", err)
+		return result, fmt.Errorf("error reading nwsData body: %w", err)
 	}
-	return resBody, nil
+	err = json.Unmarshal(resBody, &result)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
 }
 
 type forecast struct {
