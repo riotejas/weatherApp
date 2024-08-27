@@ -1,23 +1,41 @@
 
-Project Submission - Weather Service Assignment
+# Weather Application
 
-Write an HTTP server that serves the current weather. Your server should expose an endpoint that:
+Simple API to query NWS and get today's forecast
 
-1.    Accepts latitude and longitude coordinates
+# Build
+Build a docker image
+`docker build --rm -t weatherapp:v1.0 .`
 
-2.    Returns the short forecast for that area for Today (“Partly Cloudy” etc)
+# Run
+Run locally
+`docker run -p 8080:8080 weatherapp:v1.0`
 
-3.    Returns a characterization of whether the temperature is “hot”, “cold”, or “moderate” (use your discretion on mapping temperatures to each type)
+# Query
+## Forecast
+Example forecast
+```shell
+curl --request GET \
+  --url 'http://localhost:8080/v1/forecast?latitude=30.42868&longitude=-97.84273'
+```
 
-4.    Use the National Weather Service API Web Service as a data source.
+## Doc
+Get OpenAPI doc
+```shell
+curl --request GET \
+  --url http://localhost:8080/doc
+```
 
-The purpose of this exercise is to provide a sample of your work that we can discuss together in the Technical Interview.
+## Health
+Get Application Health
+```shell
+curl --request GET \
+  --url http://localhost:8080/health
+```
 
-·  We respect your time. Spend as long as you need, but we intend it to take around an hour.
-
-·  We do not expect a production-ready service, but you might want to comment on your shortcuts.
-
-·  The submitted project should build and have brief instructions so we can verify that it works.
-
-·  You may write in whatever language or stack you're most comfortable in, but the technical interviewers are most familiar with Typelevel Scala.
-
+## Simulate an error response
+Error response for users to test their error handling
+```shell
+curl --request GET \
+  --url http://localhost:8080/error
+```
