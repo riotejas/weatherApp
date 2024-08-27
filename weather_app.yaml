@@ -38,7 +38,7 @@ paths:
     get:
       summary: health
       operationId: health
-      description: ''
+      description: 'Returns application health'
       tags:
         - ''
       responses:

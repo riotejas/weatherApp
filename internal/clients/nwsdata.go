@@ -101,7 +101,7 @@ func generateFeels(temp int) string {
 	}
 }
 
-// fetchData is a generic function that can fetch and unmarshal data into either grid or forecast structs
+// fetchClientData is a generic function that can fetch and unmarshal data into either grid or forecast structs
 func fetchClientData[T grid | forecast](url string) (T, error) {
 	var result T
 	req, err := http.NewRequest(http.MethodGet, url, nil)
