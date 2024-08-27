@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	wamiddleware "weatherApp/internal/middleware"
 )
 
@@ -34,10 +36,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		http.Error(w, http.StatusText(400), 400)
 	})
 
-	// todo: add openapi doc for endpoints
-	r.Get("/doc", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write([]byte("openAPI doc is TBD"))
-	})
+	r.Get("/doc", s.DocHandler)
 
 	return r
 }
@@ -64,4 +63,22 @@ func (s *Server) HealthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(res)
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) DocHandler(w http.ResponseWriter, r *http.Request) {
+	file, err := os.Open("./weather_app.yaml")
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+
+	w.Header().Set("Content-Type", "application/x-yaml")
+	w.Header().Set("Content-Disposition", "attachment; filename=weather_app.yaml")
+
+	_, err = io.Copy(w, file)
+	if err != nil {
+		http.Error(w, "File copy error", http.StatusInternalServerError)
+		return
+	}
 }

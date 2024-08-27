@@ -5,11 +5,11 @@ Simple API to query NWS and get today's forecast
 
 # Build
 Build a docker image
-`docker build --rm -t weatherapp:v1.0 .`
+`make docker-build`
 
 # Run
 Run locally
-`docker run -p 8080:8080 weatherapp:v1.0`
+`make docker-run`
 
 # Query
 ## Forecast

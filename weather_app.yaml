@@ -58,7 +58,7 @@ paths:
       tags:
         - ''
       responses:
-        '200':
+        '400':
           description: ''
 servers:
   - url: http://localhost:8080
